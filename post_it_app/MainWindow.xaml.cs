@@ -24,5 +24,30 @@ namespace post_it_app
         {
             InitializeComponent();
         }
-    }
+
+        Button btAdd;
+
+        private void Add_new_postit(Object sender, RoutedEventArgs e)
+        {
+            Rectangle rectangle = new Rectangle
+            {
+                Fill = Brushes.Yellow,
+                Stroke = Brushes.Black,
+                Height = 100,
+                Width = 100,
+                Margin = new Thickness(5)
+            };
+            wpPostIts.Children.Add(rectangle);
+
+
+        }
+
+        
+
+        
+   }
+
+    // find a button by name
+
 }
+
