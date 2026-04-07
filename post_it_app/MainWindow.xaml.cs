@@ -1,4 +1,5 @@
-﻿using System;
+﻿using post_it_app.textHandling;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -29,16 +30,20 @@ namespace post_it_app
 
         private void Add_new_postit(Object sender, RoutedEventArgs e)
         {
-            Rectangle rectangle = new Rectangle
+            TextBox tb = new TextBox
             {
-                Fill = Brushes.Yellow,
-                Stroke = Brushes.Black,
+                Background = Brushes.Yellow,
+                BorderBrush = Brushes.Black,
                 Height = 100,
                 Width = 100,
-                Margin = new Thickness(5)
+                Margin = new Thickness(5)                
             };
-            wpPostIts.Children.Add(rectangle);
 
+            String test = tb.Text;
+            
+            wpPostIts.Children.Add(tb);
+
+            StoreText st = new StoreText(test);
 
         }
 
