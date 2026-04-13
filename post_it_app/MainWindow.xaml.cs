@@ -24,6 +24,14 @@ namespace post_it_app
         public MainWindow()
         {
             InitializeComponent();
+            try
+            {
+                PostItLibrary.initialiseDatabase();
+
+            } catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
 
         Button btAdd;
@@ -39,11 +47,28 @@ namespace post_it_app
                 Margin = new Thickness(5)                
             };
 
-            String test = tb.Text;
-            
+            try
+            {
+                PostItLibrary.storeNew("");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+
             wpPostIts.Children.Add(tb);
 
-            StoreText st = new StoreText(test);
+            // TODO: 
+            // récupérer la modification
+            // récupérer id
+            // modifier la bonne table
+
+            /*
+            tb.TextChanged += (s, e) =>
+            {
+                PostItLibrary.storeNew(tb.Text);
+            };
+            */
 
         }
 
