@@ -49,7 +49,7 @@ namespace post_it_app
         }
 
 
-        public static void storeNew(string text, double posX=0, double posY=0)
+        public static int storeNew(string text, double posX=0, double posY=0)
         {
             Batteries.Init();
 
@@ -60,6 +60,7 @@ namespace post_it_app
                 const string insertQuery = @"
                 INSERT INTO ""PostIt"" (text, posX, posY)
                 VALUES (@text, @posX, @posY);
+                SELECT last_insert_row_id();
                 ";
 
                 using (var command = new SqliteCommand(insertQuery, connection))
@@ -67,7 +68,9 @@ namespace post_it_app
                     command.Parameters.AddWithValue("@text", text);
                     command.Parameters.AddWithValue("@posX", posX);
                     command.Parameters.AddWithValue("@posY", posY);
-                    command.ExecuteNonQuery();
+                    var id = (long)command.ExecuteScalar();
+                    return (int)id;
+                    //command.ExecuteNonQuery();
                 }
             }
         }

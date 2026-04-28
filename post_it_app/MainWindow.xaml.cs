@@ -38,44 +38,33 @@ namespace post_it_app
 
         private void Add_new_postit(Object sender, RoutedEventArgs e)
         {
+            int id = 1;
+
             TextBox tb = new TextBox
             {
                 Background = Brushes.Yellow,
                 BorderBrush = Brushes.Black,
                 Height = 100,
                 Width = 100,
-                Margin = new Thickness(5)                
+                Margin = new Thickness(5)
             };
 
-            wpPostIts.Children.Add(tb);
-            
+            // get db last inserted id
             try
             {
-                
                 // TODO: position non mise à jour.
-                PostItLibrary.storeNew("", 0, 0);
+                id = PostItLibrary.storeNew("", 0, 0);
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
             }
 
-            // tb.MouseLeftButtonDown += textBox_Clicked;
-            tb.LostFocus += TextBox_OutClicked;
+            // associate db id with tag
+            tb.Tag = id;
 
-
-            // TODO: 
-            // récupérer la modification
-            // récupérer id
-            // modifier la bonne table
-
-            /*
-            tb.TextChanged += (s, e) =>
-            {
-                PostItLibrary.storeNew(tb.Text);
-            };
-            */
-
+            wpPostIts.Children.Add(tb);
+            tb.TextChanged += TextBox_Update;
 
         }
 
@@ -99,7 +88,7 @@ namespace post_it_app
          * focus loss: we should be able to click on the window to go out of focus (TODO)
          * 
          */
-        private void TextBox_OutClicked(object sender, RoutedEventArgs e)
+        private void TextBox_Update(object sender, RoutedEventArgs e)
         {
             TextBox tb = sender as TextBox;
             if (tb != null)
