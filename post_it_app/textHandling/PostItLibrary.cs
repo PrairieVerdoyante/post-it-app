@@ -49,7 +49,7 @@ namespace post_it_app
         }
 
 
-        public static void storeNew(string text)
+        public static void storeNew(string text, double posX=0, double posY=0)
         {
             Batteries.Init();
 
@@ -59,12 +59,14 @@ namespace post_it_app
 
                 const string insertQuery = @"
                 INSERT INTO ""PostIt"" (text, posX, posY)
-                VALUES (@text, NULL, NULL);
+                VALUES (@text, @posX, @posY);
                 ";
 
                 using (var command = new SqliteCommand(insertQuery, connection))
                 {
                     command.Parameters.AddWithValue("@text", text);
+                    command.Parameters.AddWithValue("@posX", posX);
+                    command.Parameters.AddWithValue("@posY", posY);
                     command.ExecuteNonQuery();
                 }
             }
