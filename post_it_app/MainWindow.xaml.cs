@@ -86,11 +86,13 @@ namespace post_it_app
 
         private void textBox_Clicked(object sender, MouseButtonEventArgs e)
         {
+            // select a post it and get its id.
+            /*
             TextBox tb = sender as TextBox;
             if (tb != null)
             {
                 string content = tb.Text.ToString();
-            }
+            }*/
         }
 
         /***
@@ -103,7 +105,8 @@ namespace post_it_app
             if (tb != null)
             {
                 string content = tb.Text.ToString();
-                MessageBox.Show(content);
+
+                PostItLibrary.editPostIt(1, content);
             }
         }
 

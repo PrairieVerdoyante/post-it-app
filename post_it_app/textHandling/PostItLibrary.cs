@@ -71,5 +71,29 @@ namespace post_it_app
                 }
             }
         }
+
+        public static void editPostIt(int id, string text, double posX=0, double posY=0)
+        {
+            Batteries.Init();
+
+            using (var connection = new SqliteConnection(ConnectionString))
+            {
+                connection.Open();
+
+                const string editTableQuery = @"
+                UPDATE ""PostIt""
+                    SET text = @text, posX = @posX, posY = @posY WHERE id = @id;
+                ";
+
+                using (var command = new SqliteCommand(editTableQuery, connection))
+                {
+                    command.Parameters.AddWithValue("@id", id);
+                    command.Parameters.AddWithValue("@text", text);
+                    command.Parameters.AddWithValue("@posX", posX);
+                    command.Parameters.AddWithValue("@posY", posY);
+                    command.ExecuteNonQuery();
+                }
+            }
+        }
     }
 }
