@@ -13,6 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 
 namespace post_it_app
 {
@@ -31,7 +32,6 @@ namespace post_it_app
 
                 var postIts = PostItLibrary.getAll();
 
-                
                 foreach (PostIt pit in postIts)
                 {
                     Add_new_postit(pit.Text, pit.Id);
@@ -51,7 +51,6 @@ namespace post_it_app
         private void Add_new_postit(string name="", int id=0)
         {
             
-            // get db last inserted id
             try
             {
                 // TODO: position non mise à jour.
@@ -77,6 +76,7 @@ namespace post_it_app
                 Width = 120,
                 FontSize = 16,
                 Margin = new Thickness(5),
+                Padding = new Thickness(5),
                 Text = name.ToString(),
                 // associate id with db
                 Tag = id
@@ -87,17 +87,50 @@ namespace post_it_app
 
         }
 
+        private Dictionary<TextBox, DispatcherTimer> saveTimers = new Dictionary<TextBox, DispatcherTimer>();
+
         private void TextBox_Update(object sender, RoutedEventArgs e)
         {
             TextBox tb = sender as TextBox;
-            if (tb != null)
-            {
-                string content = tb.Text;
 
-                PostItLibrary.editPostIt((int)tb.Tag, content);
+            if (tb == null)
+                return;
+
+            if (!(tb.Tag is int))
+                return;
+
+            int id = (int)tb.Tag;
+
+            // introduce timer to avoid bd overload
+            if (!saveTimers.ContainsKey(tb))
+            {
+                var timer = new DispatcherTimer
+                {
+                    // every 500ms
+                    Interval = TimeSpan.FromMilliseconds(500)
+                };
+
+                timer.Tick += (s, args) =>
+                {
+                    timer.Stop();
+
+                    try
+                    {
+                        PostItLibrary.editPostIt(id, tb.Text);
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(ex.Message);
+                    }
+                };
+
+                saveTimers[tb] = timer;
             }
-        }        
-   }
+
+            saveTimers[tb].Stop();
+            saveTimers[tb].Start();
+        }
+    }
 
 }
 
