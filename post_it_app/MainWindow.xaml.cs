@@ -70,6 +70,7 @@ namespace post_it_app
 
             TextBox tb = new TextBox
             {
+                TextWrapping = TextWrapping.Wrap,
                 Background = Brushes.Yellow,
                 BorderBrush = Brushes.Black,
                 Height = 120,
@@ -92,14 +93,16 @@ namespace post_it_app
         private void TextBox_Update(object sender, RoutedEventArgs e)
         {
             TextBox tb = sender as TextBox;
+            int id = (int)tb.Tag;
 
+
+            
             if (tb == null)
                 return;
 
             if (!(tb.Tag is int))
                 return;
-
-            int id = (int)tb.Tag;
+            
 
             // introduce timer to avoid bd overload
             if (!saveTimers.ContainsKey(tb))
@@ -113,24 +116,27 @@ namespace post_it_app
                 timer.Tick += (s, args) =>
                 {
                     timer.Stop();
-
-                    try
-                    {
-                        PostItLibrary.editPostIt(id, tb.Text);
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show(ex.Message);
-                    }
+            
+            try
+            {
+                PostItLibrary.editPostIt(id, tb.Text);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+            
                 };
-
+        
                 saveTimers[tb] = timer;
             }
 
             saveTimers[tb].Stop();
             saveTimers[tb].Start();
+        
+        
         }
-    }
+        }
 
-}
+    }
 
