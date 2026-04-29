@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace post_it_app.textHandling
 {
-    struct PostIt
+    public class PostIt
     {
-        int id;
-        int posX;
-        int posY;
-        String text;
+        public int Id { get; set; }
+        public string Text { get; set; }
+        public int PosX { get; set; }
+        public int PosY { get; set; }
     }
 }

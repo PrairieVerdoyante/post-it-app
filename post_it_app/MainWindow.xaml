@@ -11,7 +11,7 @@
         <SolidColorBrush Opacity="0.5" Color="White"/>
     </Window.Background>
     <StackPanel Orientation="Vertical" Margin="10">
-        <WrapPanel Margin="100" Name="wpPostIts" Orientation="Horizontal">
+        <WrapPanel Margin="100" Name="wpPostIts" HorizontalAlignment="Center" Orientation="Horizontal">
             
         </WrapPanel>
           

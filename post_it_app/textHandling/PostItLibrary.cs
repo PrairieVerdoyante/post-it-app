@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Microsoft.Data.Sqlite;
 using SQLitePCL;
 using System.CodeDom;
+using static System.Net.Mime.MediaTypeNames;
 
 
 namespace post_it_app
@@ -49,7 +50,7 @@ namespace post_it_app
         }
 
 
-        public static int storeNew(string text, double posX=0, double posY=0)
+        public static int storeNew(string text, double posX = 0, double posY = 0)
         {
             Batteries.Init();
 
@@ -60,7 +61,7 @@ namespace post_it_app
                 const string insertQuery = @"
                 INSERT INTO ""PostIt"" (text, posX, posY)
                 VALUES (@text, @posX, @posY);
-                SELECT last_insert_row_id();
+                SELECT last_insert_rowid();
                 ";
 
                 using (var command = new SqliteCommand(insertQuery, connection))
@@ -70,12 +71,11 @@ namespace post_it_app
                     command.Parameters.AddWithValue("@posY", posY);
                     var id = (long)command.ExecuteScalar();
                     return (int)id;
-                    //command.ExecuteNonQuery();
                 }
             }
         }
 
-        public static void editPostIt(int id, string text, double posX=0, double posY=0)
+        public static void editPostIt(int id, string text, double posX = 0, double posY = 0)
         {
             Batteries.Init();
 
@@ -98,5 +98,34 @@ namespace post_it_app
                 }
             }
         }
+        public static List<PostIt> getAll()
+        {
+            Batteries.Init();
+            var postIts = new List<PostIt>();
+
+            using (var connection = new SqliteConnection(ConnectionString))
+            {
+                connection.Open();
+
+                const string selectQuery = @"SELECT id, text, posX, posY FROM ""PostIt"";";
+
+                using (var command = new SqliteCommand(selectQuery, connection))
+                using (var reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        postIts.Add(new PostIt
+                        {
+                            Id = reader.GetInt32(0),
+                            Text = reader.IsDBNull(1) ? "" : reader.GetString(1),
+                            PosX = (reader.IsDBNull(2) ? 0 : reader.GetInt32(2)),
+                            PosY = (reader.IsDBNull(3) ? 0 : reader.GetInt32(3))
+                        });
+                    }
+                }
+            }
+            return postIts;
+        }
     }
+    
 }

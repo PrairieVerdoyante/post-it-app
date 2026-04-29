@@ -24,9 +24,19 @@ namespace post_it_app
         public MainWindow()
         {
             InitializeComponent();
+
             try
             {
                 PostItLibrary.initialiseDatabase();
+
+                var postIts = PostItLibrary.getAll();
+
+                
+                foreach (PostIt pit in postIts)
+                {
+                    Add_new_postit(pit.Text, pit.Id);
+                }
+                
 
             } catch (Exception ex)
             {
@@ -34,77 +44,60 @@ namespace post_it_app
             }
         }
 
-        Button btAdd;
-
-        private void Add_new_postit(Object sender, RoutedEventArgs e)
+        private void Add_new_postit(object sender, RoutedEventArgs e)
         {
-            int id = 1;
-
-            TextBox tb = new TextBox
-            {
-                Background = Brushes.Yellow,
-                BorderBrush = Brushes.Black,
-                Height = 100,
-                Width = 100,
-                Margin = new Thickness(5)
-            };
-
+            Add_new_postit();
+        }
+        private void Add_new_postit(string name="", int id=0)
+        {
+            
             // get db last inserted id
             try
             {
                 // TODO: position non mise à jour.
-                id = PostItLibrary.storeNew("", 0, 0);
+
+                // add in db only if id isnt defined.
+                if (id == 0)
+                {
+                    // ajouter nouveau postit
+                    id = PostItLibrary.storeNew(name, 0, 0);
+                }
+
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
             }
 
-            // associate db id with tag
-            tb.Tag = id;
-
+            TextBox tb = new TextBox
+            {
+                Background = Brushes.Yellow,
+                BorderBrush = Brushes.Black,
+                Height = 120,
+                Width = 120,
+                FontSize = 16,
+                Margin = new Thickness(5),
+                Text = name.ToString(),
+                // associate id with db
+                Tag = id
+            };
             wpPostIts.Children.Add(tb);
+            // text changed
             tb.TextChanged += TextBox_Update;
 
         }
 
-        private void updatePostIt()
-        {
-
-        }
-
-        private void textBox_Clicked(object sender, MouseButtonEventArgs e)
-        {
-            // select a post it and get its id.
-            /*
-            TextBox tb = sender as TextBox;
-            if (tb != null)
-            {
-                string content = tb.Text.ToString();
-            }*/
-        }
-
-        /***
-         * focus loss: we should be able to click on the window to go out of focus (TODO)
-         * 
-         */
         private void TextBox_Update(object sender, RoutedEventArgs e)
         {
             TextBox tb = sender as TextBox;
             if (tb != null)
             {
-                string content = tb.Text.ToString();
+                string content = tb.Text;
 
-                PostItLibrary.editPostIt(1, content);
+                PostItLibrary.editPostIt((int)tb.Tag, content);
             }
-        }
-
-        
-
-        
+        }        
    }
-
-    // find a button by name
 
 }
 
