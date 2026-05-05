@@ -34,23 +34,26 @@ namespace post_it_app
 
                 foreach (PostIt pit in postIts)
                 {
-                    Add_new_postit(pit.Text, pit.Id);
+                    Add_new_postit(pit.Text, pit.Id, pit.PosX, pit.PosY);
                 }
-                
 
-            } catch (Exception ex)
+
+            }
+            catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
             }
         }
 
+        // todo max 36 postits
         private void Add_new_postit(object sender, RoutedEventArgs e)
         {
             Add_new_postit();
         }
-        private void Add_new_postit(string name="", int id=0)
+
+        private void Add_new_postit(string name = "", int id = 0, double posX=0, double posY=0)
         {
-            
+
             try
             {
                 // TODO: position non mise à jour.
@@ -58,8 +61,20 @@ namespace post_it_app
                 // add in db only if id isnt defined.
                 if (id == 0)
                 {
+                    /*
+                    var postIts = PostItLibrary.getAll();
+                    
+                    // get current postits positions
+                    Point nextPos = GetNextGridPosition(postIts);
+
+                  
+
+                    posX = nextPos.X;
+                    posY = nextPos.Y;
+                    */
+
                     // ajouter nouveau postit
-                    id = PostItLibrary.storeNew(name, 0, 0);
+                    id = PostItLibrary.storeNew(name, posX, posY);
                 }
 
             }
@@ -82,10 +97,18 @@ namespace post_it_app
                 // associate id with db
                 Tag = id
             };
-            wpPostIts.Children.Add(tb);
+
+            // wpPostIts
+            
+            Canvas.SetLeft(tb, posX);
+            Canvas.SetTop(tb, posY);
+            canvasPostIts.Children.Add(tb);
+            
+           // wpPostIts.Children.Add(tb);
             // text changed
             tb.TextChanged += TextBox_Update;
 
+            //tb.DragOver += TextBox_Move;
         }
 
         private Dictionary<TextBox, DispatcherTimer> saveTimers = new Dictionary<TextBox, DispatcherTimer>();
@@ -96,13 +119,11 @@ namespace post_it_app
             int id = (int)tb.Tag;
 
 
-            
             if (tb == null)
                 return;
 
             if (!(tb.Tag is int))
                 return;
-            
 
             // introduce timer to avoid bd overload
             if (!saveTimers.ContainsKey(tb))
@@ -116,27 +137,26 @@ namespace post_it_app
                 timer.Tick += (s, args) =>
                 {
                     timer.Stop();
-            
-            try
-            {
-                PostItLibrary.editPostIt(id, tb.Text);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
-            
+
+                    try
+                    {
+                        PostItLibrary.editPostIt(id, tb.Text);
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(ex.Message);
+                    }
+
                 };
-        
+
                 saveTimers[tb] = timer;
             }
 
             saveTimers[tb].Stop();
             saveTimers[tb].Start();
-        
-        
-        }
         }
 
+        // TODO: move postit    
+    }
     }
 

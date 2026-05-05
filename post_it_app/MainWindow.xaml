@@ -10,12 +10,21 @@
     <Window.Background>
         <SolidColorBrush Opacity="0.5" Color="White"/>
     </Window.Background>
-    <StackPanel Orientation="Vertical" Margin="10">
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <!--
         <WrapPanel Margin="100" Name="wpPostIts" HorizontalAlignment="Center" Orientation="Horizontal">
-            
-        </WrapPanel>
-          
 
-        <Button x:Name="bt_add" Click="Add_new_postit" Content="Add Post-it"></Button>
-    </StackPanel>
+        </WrapPanel>
+        -->
+        <Canvas Name="canvasPostIts" Background="Transparent">
+            <!-- Les post-its seront ajoutés ici -->
+        
+        </Canvas>
+        
+        <Button x:Name="bt_add" Click="Add_new_postit" Content="Add Post-it" VerticalAlignment="Bottom"></Button>
+    </Grid>
 </Window>
