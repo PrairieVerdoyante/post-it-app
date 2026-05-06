@@ -98,6 +98,22 @@ namespace post_it_app
                 }
             }
         }
+
+        public static void deletePostIt(int id)
+        {
+            Batteries.Init();
+            using (var connection = new SqliteConnection(ConnectionString))
+            {
+                connection.Open();
+                const string deleteQuery = @"DELETE FROM ""PostIt"" WHERE id = @id;";
+                using (var command = new SqliteCommand(deleteQuery, connection))
+                {
+                    command.Parameters.AddWithValue("@id", id);
+                    command.ExecuteNonQuery();
+                }
+            }
+        }
+
         public static List<PostIt> getAll()
         {
             Batteries.Init();

@@ -34,7 +34,13 @@ namespace post_it_app
 
                 foreach (PostIt pit in postIts)
                 {
-                    Add_new_postit(pit.Text, pit.Id, pit.PosX, pit.PosY);
+                    if (pit.Text == "")
+                    {
+                        PostItLibrary.deletePostIt(pit.Id);
+                    } else
+                    {
+                        Add_new_postit(pit.Text, pit.Id, pit.PosX, pit.PosY);
+                    }
                 }
 
 
@@ -190,35 +196,39 @@ namespace post_it_app
         }
         private void CanvasMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            Point position = e.GetPosition(canvas);
-
-            double offsetX = position.X - mousePosition.X;
-            double offsetY = position.Y - mousePosition.Y;
-
-            double left = Canvas.GetLeft(draggedBorder);
-            double top = Canvas.GetTop(draggedBorder);
-
-            if (double.IsNaN(left)) left = 0;
-            if (double.IsNaN(top)) top = 0;
-
-            Canvas.SetLeft(draggedBorder, left + offsetX);
-            Canvas.SetTop(draggedBorder, top + offsetY);
-
-            mousePosition = position;
-
-            TextBox tb = draggedBorder.Child as TextBox;
-
-            if (tb != null && tb.Tag is int id)
+            if (draggedBorder != null)
             {
-                // Exemple d'appel avec texte et position
-                double posX = Canvas.GetLeft(draggedBorder);
-                double posY = Canvas.GetTop(draggedBorder);
-                PostItLibrary.editPostIt(id, tb.Text, posX, posY);
-            }
+                Point position = e.GetPosition(canvas);
 
-            draggedBorder.ReleaseMouseCapture();
-            Panel.SetZIndex(draggedBorder, 0);
-            draggedBorder = null;
+                double offsetX = position.X - mousePosition.X;
+                double offsetY = position.Y - mousePosition.Y;
+
+                double left = Canvas.GetLeft(draggedBorder);
+                double top = Canvas.GetTop(draggedBorder);
+
+                if (double.IsNaN(left)) left = 0;
+                if (double.IsNaN(top)) top = 0;
+
+                Canvas.SetLeft(draggedBorder, left + offsetX);
+                Canvas.SetTop(draggedBorder, top + offsetY);
+
+                mousePosition = position;
+
+                TextBox tb = draggedBorder.Child as TextBox;
+
+                if (tb != null && tb.Tag is int id)
+                {
+                    // Exemple d'appel avec texte et position
+                    double posX = Canvas.GetLeft(draggedBorder);
+                    double posY = Canvas.GetTop(draggedBorder);
+                    PostItLibrary.editPostIt(id, tb.Text, posX, posY);
+                }
+
+                draggedBorder.ReleaseMouseCapture();
+                Panel.SetZIndex(draggedBorder, 0);
+                draggedBorder = null;
+            }
+            
         }
 
             // sav nouvelle pos post it.
