@@ -62,23 +62,9 @@ namespace post_it_app
 
             try
             {
-                // TODO: position non mise à jour.
-
                 // add in db only if id isnt defined.
                 if (id == 0)
                 {
-                    /*
-                    var postIts = PostItLibrary.getAll();
-                    
-                    // get current postits positions
-                    Point nextPos = GetNextGridPosition(postIts);
-
-                  
-
-                    posX = nextPos.X;
-                    posY = nextPos.Y;
-                    */
-
                     // ajouter nouveau postit
                     id = PostItLibrary.storeNew(name, posX, posY);
                 }
@@ -95,7 +81,7 @@ namespace post_it_app
                 Height = 130,
                 Background = Brushes.Yellow,
                 BorderBrush = Brushes.Black,
-                BorderThickness = new Thickness(2),
+                BorderThickness = new Thickness(4),
                 CornerRadius = new CornerRadius(4),
                 Tag = id
             };
@@ -104,7 +90,7 @@ namespace post_it_app
             {
                 TextWrapping = TextWrapping.Wrap,
                 Background = Brushes.Yellow,
-                BorderBrush = Brushes.Black,
+                BorderBrush = Brushes.Yellow,
                 Height = 120,
                 Width = 120,
                 FontSize = 16,
@@ -149,6 +135,7 @@ namespace post_it_app
             if (!(tb.Tag is int))
                 return;
 
+
             // introduce timer to avoid bd overload
             if (!saveTimers.ContainsKey(tb))
             {
@@ -165,6 +152,18 @@ namespace post_it_app
                     try
                     {
                         PostItLibrary.editPostIt(id, tb.Text);
+
+                        // delete postit if empty
+                        if (tb.Text == "")
+                        {
+                            PostItLibrary.deletePostIt(id);
+
+                            var border = tb.Parent as Border;
+                            if (border != null)
+                            {
+                                canvas.Children.Remove(border);
+                            }
+                        }
                     }
                     catch (Exception ex)
                     {
