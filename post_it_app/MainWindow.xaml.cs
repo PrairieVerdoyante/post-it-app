@@ -83,6 +83,17 @@ namespace post_it_app
                 MessageBox.Show(ex.Message);
             }
 
+            Border postItBorder = new Border
+            {
+                Width = 130,
+                Height = 130,
+                Background = Brushes.Yellow,
+                BorderBrush = Brushes.Black,
+                BorderThickness = new Thickness(2),
+                CornerRadius = new CornerRadius(4),
+                Tag = id
+            };
+
             TextBox tb = new TextBox
             {
                 TextWrapping = TextWrapping.Wrap,
@@ -98,17 +109,24 @@ namespace post_it_app
                 Tag = id
             };
 
+            postItBorder.Child = tb;
+
             // wpPostIts
-            
-            Canvas.SetLeft(tb, posX);
-            Canvas.SetTop(tb, posY);
-            canvasPostIts.Children.Add(tb);
-            
-           // wpPostIts.Children.Add(tb);
+
+            Canvas.SetLeft(postItBorder, posX);
+            Canvas.SetTop(postItBorder, posY);
+
+            canvas.Children.Add(postItBorder);
+
+            // wpPostIts.Children.Add(tb);
             // text changed
             tb.TextChanged += TextBox_Update;
 
-            //tb.DragOver += TextBox_Move;
+            postItBorder.MouseLeftButtonDown += CanvasMouseLeftButtonDown;
+            postItBorder.MouseLeftButtonUp += CanvasMouseLeftButtonUp;
+            postItBorder.MouseMove += CanvasMouseMove;
+
+            
         }
 
         private Dictionary<TextBox, DispatcherTimer> saveTimers = new Dictionary<TextBox, DispatcherTimer>();
@@ -156,7 +174,78 @@ namespace post_it_app
             saveTimers[tb].Start();
         }
 
-        // TODO: move postit    
+        private Point mousePosition;
+        private Border draggedBorder;
+        private void CanvasMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+
+            if (sender is Border border)
+            {
+                draggedBorder = border;
+                mousePosition = e.GetPosition(canvas);
+
+                border.CaptureMouse();
+                Panel.SetZIndex(border, 100);
+            }
+        }
+        private void CanvasMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            Point position = e.GetPosition(canvas);
+
+            double offsetX = position.X - mousePosition.X;
+            double offsetY = position.Y - mousePosition.Y;
+
+            double left = Canvas.GetLeft(draggedBorder);
+            double top = Canvas.GetTop(draggedBorder);
+
+            if (double.IsNaN(left)) left = 0;
+            if (double.IsNaN(top)) top = 0;
+
+            Canvas.SetLeft(draggedBorder, left + offsetX);
+            Canvas.SetTop(draggedBorder, top + offsetY);
+
+            mousePosition = position;
+
+            TextBox tb = draggedBorder.Child as TextBox;
+
+            if (tb != null && tb.Tag is int id)
+            {
+                // Exemple d'appel avec texte et position
+                double posX = Canvas.GetLeft(draggedBorder);
+                double posY = Canvas.GetTop(draggedBorder);
+                PostItLibrary.editPostIt(id, tb.Text, posX, posY);
+            }
+
+            draggedBorder.ReleaseMouseCapture();
+            Panel.SetZIndex(draggedBorder, 0);
+            draggedBorder = null;
+        }
+
+            // sav nouvelle pos post it.
+        
+        private void CanvasMouseMove(object sender, MouseEventArgs e)
+        {
+            if (draggedBorder != null && draggedBorder.IsMouseCaptured)
+            {
+                Point position = e.GetPosition(canvas);
+
+                double offsetX = position.X - mousePosition.X;
+                double offsetY = position.Y - mousePosition.Y;
+
+                double left = Canvas.GetLeft(draggedBorder);
+                double top = Canvas.GetTop(draggedBorder);
+
+                if (double.IsNaN(left)) left = 0;
+                if (double.IsNaN(top)) top = 0;
+
+                Canvas.SetLeft(draggedBorder, left + offsetX);
+                Canvas.SetTop(draggedBorder, top + offsetY);
+
+                mousePosition = position;
+            }
+            
+        }
+
     }
     }
 

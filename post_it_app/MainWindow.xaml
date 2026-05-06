@@ -20,9 +20,13 @@
 
         </WrapPanel>
         -->
-        <Canvas Name="canvasPostIts" Background="Transparent">
-            <!-- Les post-its seront ajoutés ici -->
-        
+        <Canvas x:Name="canvas"
+                Background="Transparent">
+            <Canvas >
+
+                <!-- Les post-its seront ajoutés ici -->
+                
+            </Canvas>
         </Canvas>
         
         <Button x:Name="bt_add" Click="Add_new_postit" Content="Add Post-it" VerticalAlignment="Bottom"></Button>
