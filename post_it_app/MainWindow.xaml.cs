@@ -52,9 +52,14 @@ namespace post_it_app
         }
 
         // todo max 36 postits
-        private void Add_new_postit(object sender, RoutedEventArgs e)
+        private void Add_new_postit(object sender, MouseButtonEventArgs e)
         {
-            Add_new_postit();
+            if (e.OriginalSource is Canvas)
+            {
+                Point position = e.GetPosition(this);
+
+                Add_new_postit(posX:position.X,posY:position.Y);
+            }
         }
 
         private void Add_new_postit(string name = "", int id = 0, double posX=0, double posY=0)
@@ -111,13 +116,11 @@ namespace post_it_app
             canvas.Children.Add(postItBorder);
 
             // wpPostIts.Children.Add(tb);
-            // text changed
             tb.TextChanged += TextBox_Update;
 
             postItBorder.MouseLeftButtonDown += CanvasMouseLeftButtonDown;
             postItBorder.MouseLeftButtonUp += CanvasMouseLeftButtonUp;
             postItBorder.MouseMove += CanvasMouseMove;
-
             
         }
 
@@ -151,14 +154,25 @@ namespace post_it_app
 
                     try
                     {
-                        PostItLibrary.editPostIt(id, tb.Text);
+                        // position handling
+                        var border = tb.Parent as Border;
+                        double pX = 0;
+                        double pY = 0;
+                        if (border != null)
+                        {
+                            pX = Canvas.GetLeft(border);
+                            if (double.IsNaN(pX)) pX = 0;
+                            pY = Canvas.GetTop(border);
+                            if (double.IsNaN(pY)) pY = 0;
+                        }
+                        
+                        PostItLibrary.editPostIt(id, tb.Text, pX, pY);
 
                         // delete postit if empty
                         if (tb.Text == "")
                         {
                             PostItLibrary.deletePostIt(id);
 
-                            var border = tb.Parent as Border;
                             if (border != null)
                             {
                                 canvas.Children.Remove(border);
@@ -230,8 +244,6 @@ namespace post_it_app
             
         }
 
-            // sav nouvelle pos post it.
-        
         private void CanvasMouseMove(object sender, MouseEventArgs e)
         {
             if (draggedBorder != null && draggedBorder.IsMouseCaptured)

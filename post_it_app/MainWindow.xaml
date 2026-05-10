@@ -15,20 +15,16 @@
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <!--
-        <WrapPanel Margin="100" Name="wpPostIts" HorizontalAlignment="Center" Orientation="Horizontal">
-
-        </WrapPanel>
-        -->
         <Canvas x:Name="canvas"
-                Background="Transparent">
-            <Canvas >
-
-                <!-- Les post-its seront ajoutés ici -->
+                Background="Transparent"
+                Focusable="True"
+                MouseDown="Add_new_postit"
+                >
+            <Canvas>
                 
+                <!-- Post-its will be added here -->
+
             </Canvas>
         </Canvas>
-        
-        <Button x:Name="bt_add" Click="Add_new_postit" Content="Add Post-it" VerticalAlignment="Bottom"></Button>
     </Grid>
 </Window>
