@@ -27,6 +27,12 @@ namespace post_it_app
 
         public static void initialiseDatabase()
         {
+            var directory = Path.GetDirectoryName(DbPath);
+            if (!Directory.Exists(directory))
+            {
+                Directory.CreateDirectory(directory);
+            }
+
             Batteries.Init();
 
             using (var connection = new SqliteConnection(ConnectionString))
