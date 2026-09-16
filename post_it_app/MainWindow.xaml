@@ -16,10 +16,12 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <Canvas x:Name="canvas"
-                Background="Transparent"
                 Focusable="True"
                 MouseDown="Add_new_postit"
                 >
+            <Canvas.Background>
+                <ImageBrush ImageSource="/Images/mush.png" />
+            </Canvas.Background>
             <Canvas>
                 
                 <!-- Post-its will be added here -->

@@ -84,18 +84,19 @@ namespace post_it_app
             {
                 Width = 130,
                 Height = 130,
-                Background = Brushes.Yellow,
-                BorderBrush = Brushes.Black,
-                BorderThickness = new Thickness(4),
+                Background = Brushes.LightCoral,
+                BorderBrush = Brushes.LightCoral,
+                BorderThickness = new Thickness(1),
                 CornerRadius = new CornerRadius(4),
                 Tag = id
             };
 
+            // https://stackoverflow.com/questions/12180146/textbox-with-background-image-and-color
             TextBox tb = new TextBox
             {
                 TextWrapping = TextWrapping.Wrap,
-                Background = Brushes.Yellow,
-                BorderBrush = Brushes.Yellow,
+                Background = Brushes.Beige,
+                BorderBrush = Brushes.Beige,
                 Height = 120,
                 Width = 120,
                 FontSize = 16,
@@ -103,7 +104,12 @@ namespace post_it_app
                 Padding = new Thickness(5),
                 Text = name.ToString(),
                 // associate id with db
-                Tag = id
+                Tag = id,
+                /*Background = new ImageBrush
+                {
+                    ImageSource = new BitmapImage(new Uri("pack://application:,,,/Images/postit_img.png")),
+                    Stretch = Stretch.UniformToFill
+                }*/
             };
 
             postItBorder.Child = tb;
