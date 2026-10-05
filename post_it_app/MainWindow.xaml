@@ -23,10 +23,34 @@
                 <ImageBrush ImageSource="/Images/mush.png" />
             </Canvas.Background>
             <Canvas>
-                
+
                 <!-- Post-its will be added here -->
 
             </Canvas>
         </Canvas>
     </Grid>
+    <Window.Resources>
+        <Style x:Key="PostItTextBox" TargetType="{x:Type TextBox}">
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="5"/>
+
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type TextBox}">
+                        <Border
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        Padding="{TemplateBinding Padding}">
+
+                            <ScrollViewer
+                            x:Name="PART_ContentHost"
+                            HorizontalScrollBarVisibility="Hidden"
+                            VerticalScrollBarVisibility="Hidden"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
 </Window>

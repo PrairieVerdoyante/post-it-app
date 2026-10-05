@@ -39,7 +39,7 @@ namespace post_it_app
                         PostItLibrary.deletePostIt(pit.Id);
                     } else
                     {
-                        Add_new_postit(pit.Text, pit.Id, pit.PosX, pit.PosY);
+                        Create_new_postit(pit.Text, pit.Id, pit.PosX, pit.PosY);
                     }
                 }
 
@@ -58,11 +58,15 @@ namespace post_it_app
             {
                 Point position = e.GetPosition(this);
 
-                Add_new_postit(posX:position.X,posY:position.Y);
+                // Décalage pour centrer le Post-it sur le clic
+                double offsetX = 65; // Width / 2
+                double offsetY = 65; // Height / 2
+
+                Create_new_postit(posX:position.X - offsetX,posY:position.Y - offsetY);
             }
         }
 
-        private void Add_new_postit(string name = "", int id = 0, double posX=0, double posY=0)
+        private void Create_new_postit(string name = "", int id = 0, double posX=0, double posY=0)
         {
 
             try
@@ -80,12 +84,15 @@ namespace post_it_app
                 MessageBox.Show(ex.Message);
             }
 
+            SolidColorBrush currentColor = generateRandomColor();
+            SolidColorBrush currentBorder = getBorder(currentColor);
+
             Border postItBorder = new Border
             {
                 Width = 130,
                 Height = 130,
-                Background = Brushes.LightCoral,
-                BorderBrush = Brushes.LightCoral,
+                Background = currentBorder,
+                BorderBrush = currentBorder,
                 BorderThickness = new Thickness(1),
                 CornerRadius = new CornerRadius(4),
                 Tag = id
@@ -95,8 +102,8 @@ namespace post_it_app
             TextBox tb = new TextBox
             {
                 TextWrapping = TextWrapping.Wrap,
-                Background = Brushes.Beige,
-                BorderBrush = Brushes.Beige,
+                Background = currentColor,
+                BorderBrush = currentBorder,
                 Height = 120,
                 Width = 120,
                 FontSize = 16,
@@ -105,6 +112,8 @@ namespace post_it_app
                 Text = name.ToString(),
                 // associate id with db
                 Tag = id,
+
+                Style = (Style)FindResource("PostItTextBox")
                 /*Background = new ImageBrush
                 {
                     ImageSource = new BitmapImage(new Uri("pack://application:,,,/Images/postit_img.png")),
@@ -113,9 +122,22 @@ namespace post_it_app
             };
 
             postItBorder.Child = tb;
+            PostItLibrary.editPostIt(id, tb.Text, posX, posY);
+
 
             // wpPostIts
-
+            var border = tb.Parent as Border;/*
+             double pX = 0;
+             double pY = 0;
+                if (border != null)
+                        {
+                            pX = Canvas.GetLeft(border)/2;
+                            if (double.IsNaN(pX)) pX = 0;
+                            pY = Canvas.GetTop(border);
+                            if (double.IsNaN(pY)) pY = 0;
+                        }
+                        
+            PostItLibrary.editPostIt(id, tb.Text, pX, pY);*/
             Canvas.SetLeft(postItBorder, posX);
             Canvas.SetTop(postItBorder, posY);
 
@@ -128,6 +150,35 @@ namespace post_it_app
             postItBorder.MouseLeftButtonUp += CanvasMouseLeftButtonUp;
             postItBorder.MouseMove += CanvasMouseMove;
             
+        }
+
+        private SolidColorBrush generateRandomColor()
+        {
+            Color[] colors =
+                {
+            Color.FromRgb(216, 226, 220),
+            Color.FromRgb(255, 229, 217),
+            Color.FromRgb(255, 202, 212),
+            Color.FromRgb(244, 172, 183),
+            Color.FromRgb(157, 129, 137),
+            Color.FromRgb(235, 185, 200),
+            Color.FromRgb(225, 175, 195)
+                };
+            return new SolidColorBrush(
+                colors[new Random().Next(colors.Length)]
+            );
+        }
+
+        private SolidColorBrush getBorder(SolidColorBrush currentColor)
+        {
+            return new SolidColorBrush
+                (
+                    Color.FromRgb(
+                        (byte)(currentColor.Color.R * 0.8),
+                        (byte)(currentColor.Color.G * 0.8),
+                        (byte)(currentColor.Color.B * 0.8)
+                        )
+                    );
         }
 
         private Dictionary<TextBox, DispatcherTimer> saveTimers = new Dictionary<TextBox, DispatcherTimer>();
