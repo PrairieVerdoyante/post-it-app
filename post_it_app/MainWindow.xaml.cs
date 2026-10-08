@@ -39,7 +39,16 @@ namespace post_it_app
                         PostItLibrary.deletePostIt(pit.Id);
                     } else
                     {
-                        Create_new_postit(pit.Text, pit.Id, pit.PosX, pit.PosY);
+                        SolidColorBrush color;
+                        try
+                        {
+                            color = (SolidColorBrush)new BrushConverter().ConvertFromString(pit.Color);
+                        }
+                        catch (FormatException)
+                        {
+                            color = generateRandomColor();   // couleur invalide : nouvelle
+                        }
+                        Create_new_postit(pit.Text, pit.Id, pit.PosX, pit.PosY, color);
                     }
                 }
 
@@ -62,11 +71,11 @@ namespace post_it_app
                 double offsetX = 65; // Width / 2
                 double offsetY = 65; // Height / 2
 
-                Create_new_postit(posX:position.X - offsetX,posY:position.Y - offsetY);
+                Create_new_postit(posX:position.X - offsetX,posY:position.Y - offsetY, color:generateRandomColor());
             }
         }
 
-        private void Create_new_postit(string name = "", int id = 0, double posX=0, double posY=0)
+        private void Create_new_postit(string name = "", int id = 0, double posX=0, double posY=0, SolidColorBrush color = null)
         {
 
             try
@@ -84,7 +93,7 @@ namespace post_it_app
                 MessageBox.Show(ex.Message);
             }
 
-            SolidColorBrush currentColor = generateRandomColor();
+            SolidColorBrush currentColor = color == null ? generateRandomColor() : color  ;
             SolidColorBrush currentBorder = getBorder(currentColor);
 
             Border postItBorder = new Border
@@ -117,7 +126,7 @@ namespace post_it_app
             };
 
             postItBorder.Child = tb;
-            PostItLibrary.editPostIt(id, tb.Text, posX, posY);
+            PostItLibrary.editPostIt(id, tb.Text, posX, posY, currentColor.ToString());
 
             // wpPostIts
             var border = tb.Parent as Border;
@@ -133,7 +142,12 @@ namespace post_it_app
             postItBorder.MouseLeftButtonDown += CanvasMouseLeftButtonDown;
             postItBorder.MouseLeftButtonUp += CanvasMouseLeftButtonUp;
             postItBorder.MouseMove += CanvasMouseMove;
-            
+
+        }
+
+        private static string GetColorString(TextBox tb)
+        {
+            return (tb.Background as SolidColorBrush)?.Color.ToString() ?? "#FF00FFFF";
         }
 
         private SolidColorBrush generateRandomColor()
@@ -207,7 +221,7 @@ namespace post_it_app
                             if (double.IsNaN(pY)) pY = 0;
                         }
                         
-                        PostItLibrary.editPostIt(id, tb.Text, pX, pY);
+                        PostItLibrary.editPostIt(id, tb.Text, pX, pY, GetColorString(tb));
 
                         // delete postit if empty
                         if (tb.Text == "")
@@ -275,7 +289,7 @@ namespace post_it_app
                     // Exemple d'appel avec texte et position
                     double posX = Canvas.GetLeft(draggedBorder);
                     double posY = Canvas.GetTop(draggedBorder);
-                    PostItLibrary.editPostIt(id, tb.Text, posX, posY);
+                    PostItLibrary.editPostIt(id, tb.Text, posX, posY, GetColorString(tb));
                 }
 
                 draggedBorder.ReleaseMouseCapture();

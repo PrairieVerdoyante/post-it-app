@@ -12,5 +12,6 @@ namespace post_it_app.textHandling
         public string Text { get; set; }
         public int PosX { get; set; }
         public int PosY { get; set; }
+        public string Color { get; set; }
     }
 }
