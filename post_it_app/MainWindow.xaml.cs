@@ -112,32 +112,16 @@ namespace post_it_app
                 Text = name.ToString(),
                 // associate id with db
                 Tag = id,
-
                 Style = (Style)FindResource("PostItTextBox")
-                /*Background = new ImageBrush
-                {
-                    ImageSource = new BitmapImage(new Uri("pack://application:,,,/Images/postit_img.png")),
-                    Stretch = Stretch.UniformToFill
-                }*/
+
             };
 
             postItBorder.Child = tb;
             PostItLibrary.editPostIt(id, tb.Text, posX, posY);
 
-
             // wpPostIts
-            var border = tb.Parent as Border;/*
-             double pX = 0;
-             double pY = 0;
-                if (border != null)
-                        {
-                            pX = Canvas.GetLeft(border)/2;
-                            if (double.IsNaN(pX)) pX = 0;
-                            pY = Canvas.GetTop(border);
-                            if (double.IsNaN(pY)) pY = 0;
-                        }
-                        
-            PostItLibrary.editPostIt(id, tb.Text, pX, pY);*/
+            var border = tb.Parent as Border;
+
             Canvas.SetLeft(postItBorder, posX);
             Canvas.SetTop(postItBorder, posY);
 
@@ -156,13 +140,13 @@ namespace post_it_app
         {
             Color[] colors =
                 {
-            Color.FromRgb(216, 226, 220),
-            Color.FromRgb(255, 229, 217),
-            Color.FromRgb(255, 202, 212),
-            Color.FromRgb(244, 172, 183),
-            Color.FromRgb(157, 129, 137),
-            Color.FromRgb(235, 185, 200),
-            Color.FromRgb(225, 175, 195)
+            Color.FromRgb(156, 137, 184),
+            Color.FromRgb(240, 166, 202),
+            Color.FromRgb(239, 195, 230),
+            Color.FromRgb(240, 230, 239),
+            Color.FromRgb(184, 190, 221)
+           // Color.FromRgb(235, 185, 200),
+           // Color.FromRgb(225, 175, 195)
                 };
             return new SolidColorBrush(
                 colors[new Random().Next(colors.Length)]
